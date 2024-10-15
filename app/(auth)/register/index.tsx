@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { authStyles } from '../Auth.style'
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { Input } from '@/components/input/Input'
-import { CheckBox } from '@/components/CheckBox'
-import { Button } from '@/components/Button'
-import { IconButton } from '@/components/IconButton'
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { CheckBox } from '@/presentation/components/Inputs/checkboxes/CheckBox'
+import { IconButton } from '@/presentation/components/Inputs/buttons/IconButton'
+import { MyButton } from '@/presentation/components/Inputs/buttons/MyButton'
+import { Input } from '@/presentation/components/Inputs/inputs/Input'
+import { router } from 'expo-router'
+import SocialAuth from '@/presentation/components/Screens/SocialAuth'
+import LogoAuth from '@/presentation/components/Screens/LogoAuth'
 
 interface RegisterState {
 	user: string
@@ -22,21 +25,9 @@ export const RegisterScreen = () => {
 	})
 	const { user, email, password, isChecked } = loginState
 
-	const onChangeUser = (user: string) => {
-		setLoginState({ ...loginState, user })
-	}
-
-	const onChangeEmail = (email: string) => {
-		setLoginState({ ...loginState, email })
-	}
-
-	const onChangePassword = (password: string) => {
-		setLoginState({ ...loginState, password })
-	}
-
-	const onClickChecked = () => {
-		setLoginState({ ...loginState, isChecked: !isChecked })
-	}
+	const handleChange = useCallback((name: keyof RegisterState, value: string | boolean) => {
+		setLoginState(prevState => ({ ...prevState, [name]: value }))
+	}, [])
 
 	const onLoginClick = () => {
 		console.log('Usuario correcto')
@@ -45,34 +36,31 @@ export const RegisterScreen = () => {
 	return (
 		<View style={styles.container}>
 			<View style={{ position: 'absolute', zIndex: 99, top: 64, left: 22 }}>
-				<IconButton icon='back' onClick={() => {}} />
+				<IconButton icon='back' onClick={() => router.push('/login')} />
 			</View>
 			<ScrollView style={{ zIndex: 1 }}>
-				<View style={authStyles.containerLogo}>
-					<Image source={require('@/assets/images/loginBanner.png')} style={authStyles.image} />
-					<View style={{ ...authStyles.circle, backgroundColor: '#B9A0F4' }}>
-						<Image source={require('@/assets/images/logoTemp.png')} />
-					</View>
-				</View>
+				{/* Logo */}
+				<LogoAuth />
+				{/* Inputs */}
 				<View style={authStyles.containerInputs}>
 					<Input
 						placeholder='Nombre o Usuario'
 						value={user}
-						onChangeValue={onChangeUser}
+						onChangeValue={value => handleChange('user', value)}
 						icon='user'
 						type='text'
 					/>
 					<Input
 						placeholder='Correo Electrónico'
 						value={email}
-						onChangeValue={onChangeEmail}
+						onChangeValue={value => handleChange('email', value)}
 						icon='email'
 						type='text'
 					/>
 					<Input
 						placeholder='Contraseña'
 						value={password}
-						onChangeValue={onChangePassword}
+						onChangeValue={value => handleChange('password', value)}
 						icon='lock'
 					/>
 				</View>
@@ -80,24 +68,14 @@ export const RegisterScreen = () => {
 					<CheckBox
 						isChecked={isChecked}
 						label='Acepto los Términos y condiciones'
-						onClick={onClickChecked}
+						onClick={() => handleChange('isChecked', !isChecked)}
 					/>
 				</View>
-				<View style={authStyles.containerButton}>
-					<Button text='Inicia sesión' onClick={onLoginClick} />
+				<View className='mt-5 bg-slate-400' style={authStyles.containerButton}>
+					<MyButton text='Registrarse' onClick={onLoginClick} />
 				</View>
-				<View style={authStyles.containerLine}>
-					<View style={authStyles.line}></View>
-					<Text style={{ color: '#444', fontSize: 12 }}>O continua con</Text>
-					<View style={authStyles.line}></View>
-				</View>
-				<View style={authStyles.containerCreateAccount}>
-					<View style={authStyles.containerIconsSocial}>
-						<IconButton icon='google' onClick={() => {}} />
-						<IconButton icon='facebook' onClick={() => {}} />
-						<IconButton icon='apple' onClick={() => {}} />
-					</View>
-				</View>
+				{/* Iniciar o registrarse con redes */}
+				<SocialAuth />
 			</ScrollView>
 		</View>
 	)
