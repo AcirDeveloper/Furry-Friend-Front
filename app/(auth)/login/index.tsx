@@ -85,8 +85,7 @@ export const LoginScreen = () => {
 				<View className='flex items-center justify-center mt-5'>
 					<TouchableOpacity onPress={() => router.push('/register')}>
 						<Text style={{ color: '#444', fontSize: 12 }}>
-							¿No tienes cuenta?{' '}
-							<Text className='font-bold text-white underline-offset-1'>Crea uno aquí</Text>
+							¿No tienes cuenta? <Text className='font-bold underline-offset-1'>Crea uno aquí</Text>
 						</Text>
 					</TouchableOpacity>
 				</View>
